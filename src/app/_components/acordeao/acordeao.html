@@ -1,0 +1,26 @@
+<div class="space-y-3">
+  @for (item of itens(); track item.titulo; let i = $index) {
+    <div
+      class="rounded-xl border transition-colors duration-300"
+      [class]="aberto() === i ? 'bg-white/10 border-fuchsia-400/40' : 'bg-white/5 border-white/10'"
+    >
+      <button
+        (click)="alternar(i)"
+        class="w-full flex justify-between items-center gap-3 text-left px-4 py-3.5 font-medium text-white"
+      >
+        <span>{{ item.titulo }}</span>
+        <span
+          class="w-7 h-7 shrink-0 flex items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white transition-transform duration-300"
+          [class.rotate-45]="aberto() === i"
+        >+</span>
+      </button>
+
+      <div
+        class="overflow-hidden transition-all duration-300"
+        [style.max-height]="aberto() === i ? '200px' : '0px'"
+      >
+        <p class="px-4 pb-4 text-sm text-white/70">{{ item.conteudo }}</p>
+      </div>
+    </div>
+  }
+</div>
