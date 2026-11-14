@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #020617;
+}
+
+.animacao-toast {
+  animation: entrar 0.3s ease-out;
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
