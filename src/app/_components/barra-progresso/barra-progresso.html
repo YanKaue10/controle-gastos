@@ -1,0 +1,10 @@
+<div>
+  <div class="w-full h-3 bg-black/30 rounded-full overflow-hidden">
+    <div
+      class="h-full rounded-full bg-gradient-to-r transition-all duration-700"
+      [class]="cor()"
+      [style.width.%]="largura()"
+    ></div>
+  </div>
+  <p class="text-right text-xs text-white/60 mt-1.5">{{ porcentagem() }}% do orçamento usado</p>
+</div>
