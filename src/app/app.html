@@ -1,0 +1,162 @@
+<app-notificacao-toast />
+
+<div class="fixed inset-0 -z-10 overflow-hidden bg-slate-950">
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-violet-600/40 rounded-full blur-3xl"></div>
+  <div class="absolute top-1/3 -right-32 w-96 h-96 bg-fuchsia-600/30 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-32 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
+</div>
+
+<main class="max-w-4xl mx-auto px-4 py-8 sm:py-12 text-white">
+
+  <header class="text-center mb-8">
+    <h1 class="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-violet-300 via-fuchsia-300 to-cyan-300 bg-clip-text text-transparent">
+      Controle de Gastos
+    </h1>
+    <p class="text-white/50 mt-1">Saiba para onde vai o seu dinheiro</p>
+  </header>
+
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+
+    <div class="rounded-2xl p-5 bg-gradient-to-br from-violet-600 to-fuchsia-600 shadow-xl shadow-fuchsia-900/40">
+      <p class="text-sm text-white/80">Total gasto</p>
+      <p class="text-3xl font-bold mt-1">{{ totalGeral() | moeda }}</p>
+      <p class="text-xs text-white/70 mt-1">{{ despesas().length }} despesa(s)</p>
+    </div>
+
+    <div class="rounded-2xl p-5 bg-white/10 backdrop-blur-xl border border-white/15">
+      <p class="text-sm text-white/60">Ainda pode gastar</p>
+      <p class="text-3xl font-bold mt-1" [class]="restante() < 0 ? 'text-rose-400' : 'text-emerald-300'">
+        {{ restante() | moeda }}
+      </p>
+      <p class="text-xs text-white/50 mt-1">{{ restante() < 0 ? 'Orçamento estourado!' : 'Dentro do orçamento' }}</p>
+    </div>
+
+    <div class="rounded-2xl p-5 bg-white/10 backdrop-blur-xl border border-white/15 sm:col-span-2 lg:col-span-1">
+      <label class="text-sm text-white/60" for="orcamento">Orçamento do mês (R$)</label>
+      <input
+        id="orcamento" type="number" min="1"
+        [ngModel]="orcamento()" (ngModelChange)="mudarOrcamento($event)"
+        class="w-full mt-1 mb-3 px-3 py-1.5 bg-black/20 border border-white/15 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-400"
+      />
+      <app-barra-progresso [valor]="percentualGasto()" />
+    </div>
+  </section>
+
+  <section class="rounded-3xl p-4 sm:p-6 bg-white/10 backdrop-blur-xl border border-white/15 shadow-2xl">
+
+    <app-abas [titulos]="titulosAbas" [(ativa)]="abaAtual">
+
+      @if (abaAtual() === 0) {
+        <form (ngSubmit)="adicionar()" class="space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-white/70 mb-1" for="descricao">Descrição</label>
+              <input
+                id="descricao" name="descricao" type="text" placeholder="Ex: Almoço"
+                [(ngModel)]="descricao"
+                class="w-full px-4 py-2.5 bg-black/20 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-400"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-white/70 mb-1" for="valor">Valor (R$)</label>
+              <input
+                id="valor" name="valor" type="number" step="0.01" min="0" placeholder="0,00"
+                [(ngModel)]="valor"
+                class="w-full px-4 py-2.5 bg-black/20 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-400"
+              />
+            </div>
+          </div>
+
+          <div>
+            <p class="text-sm font-medium text-white/70 mb-2">Categoria</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+              @for (c of categorias; track c.nome) {
+                <button
+                  type="button"
+                  (click)="categoria = c.nome"
+                  class="flex flex-col items-center gap-2 py-3 rounded-xl border text-xs font-medium transition-all duration-200"
+                  [class]="categoria === c.nome
+                    ? 'bg-gradient-to-br from-violet-500 to-fuchsia-500 border-transparent scale-105 shadow-lg shadow-fuchsia-500/30'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'"
+                >
+                  <span class="w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold" [class]="c.cor">
+                    {{ c.nome[0] }}
+                  </span>
+                  {{ c.nome }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full sm:w-auto px-8 py-3 rounded-xl font-semibold bg-gradient-to-r from-violet-500 to-fuchsia-500 shadow-lg shadow-fuchsia-500/30 hover:scale-105 active:scale-95 transition"
+          >
+            Salvar despesa
+          </button>
+        </form>
+      }
+
+      @if (abaAtual() === 1) {
+        <div>
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+            <app-menu-suspenso
+              [rotulo]="'Filtro: ' + categoriaFiltro()"
+              [opcoes]="opcoesFiltro"
+              (escolheu)="filtrar($event)"
+            />
+            <p class="text-sm text-white/70">
+              Total ({{ categoriaFiltro() }}):
+              <strong class="text-lg text-fuchsia-300">{{ totalFiltrado() | moeda }}</strong>
+            </p>
+          </div>
+
+          @if (despesasFiltradas().length === 0) {
+            <div class="text-center py-12 text-white/40">
+              Nenhuma despesa encontrada.
+            </div>
+          }
+
+          <ul class="space-y-2">
+            @for (d of despesasDaPagina(); track d.id) {
+              <li class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
+                <div class="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl text-lg font-bold" [class]="infoCategoria(d.categoria).cor">
+                  {{ d.categoria[0] }}
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium truncate">{{ d.descricao }}</p>
+                  <p class="text-xs text-white/50">{{ d.categoria }} · {{ d.data | data }}</p>
+                </div>
+
+                <span class="font-bold whitespace-nowrap">{{ d.valor | moeda }}</span>
+                <button
+                  (click)="remover(d)"
+                  class="px-3 py-1.5 shrink-0 rounded-lg text-sm text-rose-300 hover:bg-rose-500/20 transition"
+                >Excluir</button>
+              </li>
+            }
+          </ul>
+
+          <app-paginacao
+            [totalPaginas]="totalPaginas()"
+            [paginaAtual]="paginaAtual()"
+            (mudou)="paginaAtual.set($event)"
+          />
+        </div>
+      }
+
+      @if (abaAtual() === 2) {
+        <div>
+          <h2 class="font-semibold text-lg mb-3">Perguntas frequentes</h2>
+          <app-acordeao [itens]="perguntas" />
+        </div>
+      }
+
+    </app-abas>
+  </section>
+
+  <footer class="text-center text-xs text-white/30 mt-8">
+    Feito com Angular + Tailwind CSS
+  </footer>
+</main>
