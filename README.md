@@ -1,59 +1,69 @@
-# ControleGastos
+# Controle de Gastos
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.30.
+Sistema simples de controle de despesas pessoais, feito com **Angular 21**, **TypeScript** e **Tailwind CSS**.
+Os dados ficam salvos no **localStorage** do navegador, então continuam lá mesmo depois de fechar a página.
 
-## Development server
+## Funcionalidades
 
-To start a local development server, run:
+- Cadastrar despesas com descrição, valor e categoria
+- Listar as despesas cadastradas
+- Filtrar as despesas por categoria
+- Calcular o total gasto (geral e da categoria filtrada)
+- Definir um orçamento do mês e ver quanto dele já foi usado
+- Excluir despesas
+- Layout responsivo (celular, tablet e computador)
 
-```bash
-ng serve
+## Componentes
+
+Cada componente fica em sua própria pasta, dentro de `src/app/_components/`.
+
+| Componente | Pasta | Onde é usado |
+|---|---|---|
+| Abas | `abas/` | Separa a tela em "Nova despesa", "Minhas despesas" e "Ajuda" |
+| Menu Suspenso | `menu-suspenso/` | Filtro de categoria na lista de despesas |
+| Paginação | `paginacao/` | Mostra a lista de 5 em 5 despesas |
+| Barra de Progresso | `barra-progresso/` | Mostra quanto do orçamento já foi gasto |
+| Acordeão | `acordeao/` | Perguntas frequentes na aba "Ajuda" |
+| Notificação Toast | `notificacao-toast/` | Avisos de sucesso, erro e informação |
+
+## Estrutura do projeto
+
+```
+src/app/
+├── app.ts / app.html      → componente principal
+├── app.config.ts          → configuração da aplicação
+├── models/                → formato da despesa e lista de categorias
+├── services/              → despesas (localStorage) e notificações
+├── pipes/                 → formatação de moeda (R$) e data
+└── _components/           → os 6 componentes visuais
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+A pasta `versao-angularjs/` guarda a primeira versão do sistema, feita em AngularJS.
 
-## Code scaffolding
+## Como rodar o projeto
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Requisitos: [Node.js](https://nodejs.org/) instalado.
 
-```bash
-ng generate component component-name
-```
+1. Instale as dependências:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+   ```bash
+   npm install
+   ```
 
-```bash
-ng generate --help
-```
+2. Inicie o servidor:
 
-## Building
+   ```bash
+   npm start
+   ```
 
-To build the project run:
+3. Abra o navegador em `http://localhost:4200/`.
 
-```bash
-ng build
-```
+A página atualiza sozinha sempre que um arquivo é alterado.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Gerar a versão final
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Os arquivos prontos ficam na pasta `dist/`.
