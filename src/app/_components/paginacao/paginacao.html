@@ -1,0 +1,31 @@
+@if (totalPaginas() > 1) {
+  <div class="flex flex-wrap justify-center items-center gap-2 mt-5">
+    <button
+      (click)="irPara(paginaAtual() - 1)"
+      [disabled]="paginaAtual() === 1"
+      class="px-3 py-1.5 rounded-lg text-sm text-white/80 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition"
+    >
+      ← Anterior
+    </button>
+
+    @for (numero of paginas(); track numero) {
+      <button
+        (click)="irPara(numero)"
+        class="w-9 h-9 rounded-lg text-sm font-semibold transition"
+        [class]="numero === paginaAtual()
+          ? 'bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-fuchsia-500/30 scale-110'
+          : 'text-white/70 bg-white/10 hover:bg-white/20'"
+      >
+        {{ numero }}
+      </button>
+    }
+
+    <button
+      (click)="irPara(paginaAtual() + 1)"
+      [disabled]="paginaAtual() === totalPaginas()"
+      class="px-3 py-1.5 rounded-lg text-sm text-white/80 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition"
+    >
+      Próxima →
+    </button>
+  </div>
+}
