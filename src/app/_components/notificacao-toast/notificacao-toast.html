@@ -1,0 +1,11 @@
+<div class="fixed top-4 left-4 right-4 sm:left-auto sm:w-80 z-50 space-y-2">
+  @for (toast of toastService.mensagens(); track toast) {
+    <div
+      class="animacao-toast flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-white text-sm bg-gradient-to-r"
+      [class]="cores[toast.tipo]"
+    >
+      <span class="flex-1">{{ toast.texto }}</span>
+      <button (click)="toastService.fechar(toast)" class="text-xl leading-none opacity-70 hover:opacity-100">×</button>
+    </div>
+  }
+</div>
